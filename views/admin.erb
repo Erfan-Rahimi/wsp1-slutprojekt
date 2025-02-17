@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+    <h1>Admin Panel - Manage Movies</h1>
+
+    <a href="/movies/new">Add New Movie</a>
+
+    <ul>
+        <% @movies.each do |movie| %>
+        <li>
+            <strong><%= movie["title"]%></strong> - <%= movie["genre"]%> - $<%= movie["price"]%>
+
+            
+        </li>
+        <%end%>
+    </ul>
+</body>
+</html>

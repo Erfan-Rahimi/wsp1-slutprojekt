@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movies</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <h1>Available Movies</h1>
+
+    <ul>
+        <% @movies.each do |movie| %>
+        <li>
+            <strong><%= movie["title"]%></strong> - <%= movie["genre"]%> - $<%= movie["price"] %>
+                <% if session[:user_id]%>
+                    <form action="/rent/<%= movie['id'] %>" method="POST" style="display:inline;">
+                        <button type="submit">Rent</button>
+                    </form>
+                <%end%>
+        </li>
+        <%end%>
+    </ul>
+
+    <% if session[:role] == "admin" %>
+        <a href="/admin">Go to Admin Panel</a>
+    <%end%>
+
+    <br>
+    <a href="/">Back to Home</a>
+</body>
+</html>

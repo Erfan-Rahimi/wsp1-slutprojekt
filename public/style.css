@@ -4,4 +4,41 @@ body {
   background-color: #f1f1f1;
   font-size: x-large;
   margin: 1em;
+  background-color: black;
 }
+
+.no-margin{
+  margin: 0;
+}
+
+.wrapper{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  font-weight: 1000;
+  font-size: 250px;
+}
+
+.movie_text p{
+  margin: 0;
+}
+
+.pill{
+  background-color: black;
+  border: none;
+  color: rgb(0, 0, 0);
+  padding: 20px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 0.25em;
+  cursor: pointer;
+  border-radius: 2em; 
+  border: none;
+  outline: none;
+  background: rgb(133, 131, 131);
+}
+
