@@ -1,0 +1,77 @@
+<!-- views/layout.erb -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Theaters</title>
+
+  <link rel="stylesheet" type="text/css" href="/style.css?<%= Time.now.to_i %>">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <header class="primary-header flex">
+    <div class="logo"><i>Theaters</i></div>
+    <button class="mobile-nav-toggle" onclick="myFunction(this)">
+      <span class="bar1"></span><span class="bar2"></span><span class="bar3"></span>
+    </button>
+
+    <nav>
+      <ul class="primary-navigation flex">
+        <li><a href="/">Home</a></li>
+        <li><a href="/movie/movies">Movies</a></li>
+        <li><a href="/movie/login">Log in</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <%= yield %> <!-- HÄR LÄGGS SIDANS INNEHÅLL IN -->
+  </main>
+
+  <footer>
+    <!-- Footer exakt som du hade den innan -->
+    <div class="footer_col">
+      <h4>products</h4>
+      <ul>
+        <li><a href="#">teams</a></li>
+        <li><a href="#">advertisements</a></li>
+        <li><a href="#">talent</a></li>
+      </ul>
+    </div>
+    <div class="footer_col">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="#">Work</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Legal</a></li>
+        <li><a href="#">Contact us</a></li>
+      </ul>
+    </div>
+    <div class="footer_col">
+      <h4>network</h4>
+      <ul>
+        <li><a href="#">Raters</a></li>
+        <li><a href="#">License</a></li>
+        <li><a href="#">Buisiness</a></li>
+        <li><a href="#">Events</a></li>
+        <li><a href="#">API</a></li>
+      </ul>
+    </div>
+    <div class="footer_col">
+      <img src="/img/Ponyo2.png" alt="Logo" width="250">
+      <div class="links">
+        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+        <a href="#"><i class="fab fa-facebook-f"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/js/main.js"></script>
+</body>
+</html>
