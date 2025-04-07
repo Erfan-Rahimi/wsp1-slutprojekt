@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="/style.css?<%=Time.now.to_i%>">
+</head>
+<body id="cart-body">
+  <div class="cart-wrapper">
+    
+    <div class="cart-items">
+      <h1>Varukorg (<%= @cart_count %> Varor)</h1>
+
+      <% if @cart_movies.empty? %>
+        <p>Your cart is empty.</p>
+        <a href="/movies">Browse Movies</a>
+     <% else %>
+          <% @cart_movies.each do |movie| %>
+
+           <div class="cart-item">
+            <div class="item-container">
+             <div class="item-image">
+                <img src="/img/<%= movie['image_filename'] %>" alt="<%= movie['title'] %>">
+             </div>
+
+              <div class="item-details">
+                  <h2><%= movie['title'] %></h2>
+                  <p><strong>Genre:</strong><%= movie['genre']%></p>
+                  <p><strong>Price:</strong> $<%= movie['price'] %></p>
+              </div>
+            </div>
+
+              <div class="item-actions">
+                <form action="/cart/remove/<%= movie['id']%>" method="post">
+                  <button class="remove-button">✖</button>
+                </form>
+              </div>
+
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+      
+      <div class="cart-submissions">
+        <p><strong>Delsumma</strong> <%= @cart_total%> kr</p>
+        <hr>
+        <p><strong>Totalt:</strong> <%= @cart_total%> kr</p>
+
+        <form action="/rent" method="post">
+          <button type="submit" class="checkout-button">Rent</button>
+        </form>
+        
+        <form action="/clear_cart" method="post">
+          <button type="submit" class="clear-cart-button">Clear cart</button>
+        </form>
+
+        <a href="/movies" class="browse-link">Continue Browsing</a>
+    </div>
+</div>
+<body>
+<script src="/js/edit.js"></script>
+</html>

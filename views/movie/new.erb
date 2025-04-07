@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="/style.css?<%=Time.now.to_i%>">
+</head>
+<body>
+    <div class="edit-container">
+        <div class="entryarea">
+            <form action="/movies/add" method="post">
+                <div class="edit-input">
+                    <p>Movie name:</p>
+                    <input type="text" id="movie_name" class="edit_input" name="movie_name">
+                </div>
+                <div class="edit-input"></div>
+                    <p>Movie genre:</p>
+                    <input type="text" id="movie_genre" class="edit_input" name="movie_genre">
+                <div class="edit-input">
+                    <p>Movie price:</p>
+                    <input type="text" id="movie_price" class="edit_input" name="movie_price">
+                </div>
+                <div class="edit-input">
+                    <p>Movie description:</p>
+                    <input type="text" id="movie_description" class="edit_input" name="movie_description">
+                </div>
+                <div class="edit-input">
+                    <p>Available: </p>
+                    <input type="checkbox" id="available" class="edit_input" name="available">
+                </div>
+                <div id="drop-zone" class="drop-zone">
+                    <img src="/img/default_movie.jpg" id="current-image" class="selected-image" alt="Movie Poster">
+                </div>
+                <input type="hidden" name="image_filename" id="image_filename" value="default_movie.jpg">
+
+                <div class="image-selection">
+                    <% @images&.each do |img| %> <!-- Use safe navigation to prevent errors if @images is nil -->
+                        <div class="image-item" draggable="true" data-filename="<%= img %>">
+                            <img src="/img/<%= img %>" class="selectable-image" alt="Selectable Movie Poster">
+                        </div>
+                    <% end %>
+                </div>
+
+                <button type="submit">Save</button>
+            </form>
+        </div>
+    </div>
+<body>
+<script src="/js/edit.js"></script>
+</html>

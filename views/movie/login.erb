@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="/style.css?<%=Time.now.to_i%>">
+
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <title>Document</title>
+</head>
+<body id="login-body">
+
+<header class="primary-header flex">
+    <div class="logo">
+        <i>Theaters</i>
+    </div>
+
+    <button aria-label="Open navigation" class="mobile-nav-toggle" aria-controls="primary-navigation " aria-expanded="false" onclick="myFunction(this)">
+        <span class="bar1"></span>
+        <span class="bar2"></span>
+        <span class="bar3"></span>
+    </button>
+
+        <nav>
+            <ul id="primary-navigation" data-visible="false" class="primary-navigation flex">
+                <li><a aria-label="Home" href="/">Home</a></li>
+                <li><a aria-label="Movies" href="/movie/movies">Movies</a></li>
+                <li><a aria-label="login" href="/movie/login">Log in</a></li>
+            </ul>
+        </nav>
+</header> 
+
+<div class="container">
+    <section class="login_display">
+        <form action="/login" method="POST" class="login-form">
+        <h2>Log in page</h2>
+        <div class="login_view">
+            <div class="login">
+                <span class="login-text sign_text">Log in</span>
+
+                <!-- Användarnamn -->
+                <div class="email">
+                <input type="text" id="email" name="username" class="input-field" placeholder="Email" autocomplete="off" required>
+                <label for="email" class="input-label">Email</label>
+                </div>
+
+                <!-- Lösenord -->
+                <div class="password">
+                <input type="text" id="password" name="password" class="input-field" placeholder="Password" autocomplete="off" required>
+                <label for="password" class="input-label">Password</label>
+                </div>
+
+                <button type="submit" class="login_button button">Log in</button>
+
+                <button type="button" class="forgot_button button">
+                    <span class="button_text">Forgot password?</span>
+                </button>
+            </div>
+            <div class="sign_in">
+                <span class="login-text sign_text">Dont have an Subscruption?</span>
+
+                <button type="button" class="subscribe_button button" onclick="window.location.href='/movie/register'">Subscribe</button>
+                <button type="button" class="forgot_button button">
+                    <span class="button_text">Continue as guest</span>
+                </button>
+            </div>
+        </div>
+        </form>
+    </section>
+</div>
+<footer>
+    <div class="footer_col">
+        <h4>products</h4>
+        <ul>
+            <li><a aria-label="Teams" href="#">teams</a></li>
+            <li><a aria-label="advertisements" href="#">advertisements</a></li>
+            <li><a aria-label="Talent" href="#">talent</a></li>
+        </ul>
+    </div>
+    <div class="footer_col">
+        <h4>Company</h4>
+        <ul>
+            <li><a aria-label="Work" href="#">Work</a></li>
+            <li><a aria-label="About" href="#">About</a></li>
+            <li><a aria-label="Legal" href="#">Legal</a></li>
+            <li><a aria-label="Contact us" href="#">Contact us</a></li>
+        </ul>
+    </div>
+    <div class="footer_col">
+        <h4>network</h4>
+        <ul>
+            <li><a aria-label="Raters" href="#">Raters</a></li>
+            <li><a aria-label="License" href="#">License</a></li>
+            <li><a aria-label="Buisiness" href="#">Buisiness</a></li>
+            <li><a aria-label="Events" href="#">Events</a></li>
+            <li><a aria-label="API" href="#">API</a></li>
+        </ul>
+    </div>
+    <div class="footer_col">
+        <img src="/img/Ponyo2.png" alt=""  width="250" height="auto">
+        <div class="links">
+            <a aria-label="Linkedin" href="#"><i class="fab fa-linkedin-in"></i></a>
+            <a aria-label="Facebook" href="#"><i class="fab fa-facebook-f"></i></a>
+            <a aria-label="Twitter" href="#"><i class="fab fa-twitter"></i></a>
+            <a aria-label="Instagram" href="#"><i class="fab fa-instagram"></i></a>
+        </div>
+    </div>
+</footer>
+    
+</body>
+<script src="/js/main.js"></script>
+</html>

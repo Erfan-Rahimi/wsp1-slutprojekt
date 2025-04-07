@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="/style.css?<%=Time.now.to_i%>">
+</head>
+<body>
+    <div class="movie-container">
+
+        
+        <img src="/img/<%= @movie['image_filename'] %>" alt="<%= @movie['title'] %>">
+
+        <div class="details">
+
+
+            <% if admin? %>
+                <div class="movie-edit">
+                <a href="/movies/<%= @movie['id']%>/edit" class="delete_edit_button">Edit</a>
+                </div>
+
+                <div class="movie-delete">
+                    <form action="/movies/<%= @movie['id']%>/delete" method="post">
+                        <button type="submit" class="delete_edit_button">
+                            delete
+                        </button>
+                    </form>
+                </div>
+            <% end %>
+
+            <div class="detail-text">
+                <h1 class="movie-title"><%= @movie['title']%></h1>
+                <p class="movie-genre"><strong>Genre:</strong> <%= @movie['genre']%></p>
+                <p class ="movie-price"><strong>Price:</strong><%= @movie['price']%></p>
+
+                <p class="movie-availability">
+                    <strong>Availability: </strong>
+                    <%= @movie['available_for_rent'] == 1 ? 'Available' : 'Not available'%>
+                </p>
+
+                <p class="movie-description">
+                    <strong>Product description:<strong>
+                    <%= @movie['movie_description']%>
+                </p>
+
+                <% if @movie['available_for_rent'] == 1 %>
+                    <form action="/cart/add/<%= @movie['id']%>" method="post">
+                        <button type="submit" class="rent-button">Add to cart</button>
+                    </form>
+                <%end%>
+            <div>
+        </div>
+    </div>
+<body>
+<script src="/js/edit.js"></script>
+</html>

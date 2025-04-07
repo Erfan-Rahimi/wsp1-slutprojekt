@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="/style.css?<%=Time.now.to_i%>">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+
+</head>
+<body>
+
+    <div class="dashboard-cards">
+        <div class="card">
+            <h2>Filmer</h2>
+            <p><%= @movies.count%>totalt</p>
+            <a href="/movies/new">Lägg till film</a>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Användare</h2>
+        <p><%= @users.count%> totlat</p>
+    </div>
+</body>
+<script src="/js/index.js"></script>
+</html>

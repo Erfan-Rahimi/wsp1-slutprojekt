@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="/style.css?<%=Time.now.to_i%>">
+</head>
+<body>
+
+    <header class="primary-header flex">
+    <div class="logo">
+        <i>Theaters</i>
+    </div>
+
+    <button aria-label="Open navigation" class="mobile-nav-toggle" aria-controls="primary-navigation " aria-expanded="false" onclick="myFunction(this)">
+        <span class="bar1"></span>
+        <span class="bar2"></span>
+        <span class="bar3"></span>
+    </button>
+
+            <nav>
+                <ul id="primary-navigation" data-visible="false" class="primary-navigation flex">
+
+                    <% if session[:role] == 'user'%>
+                        <li><a aria-label="Home" href="/">Home</a></li>
+                        <li><a href="/logout">Logout</a></li>
+                        <li><a aria-label="Movies" href="/movies">Movies</a></li>
+                        <li><a href="/cart">Cart(<%= cart_count %>)</a></li>
+                    <% elsif session[:role] == 'admin'%>
+                        <li><a aria-label="Home" href="/">Home</a></li>
+                        <li><a href="/logout">Logout</a></li>
+                        <li><a aria-label="Movies" href="/movies">Movies</a></li>
+                        <li><a aria-label="new movie" class="new-button" href="/movie/new">New movie</a></li>
+                    <% else %>
+                        <li><a aria-label="Home" href="/">Home</a></li>
+                        <li><a aria-label="Movies" href="/movies">Movies</a></li>
+                        <li><a aria-label="login" href="/movie/login">Log in</a></li>
+                    <% end %>
+                </ul>
+            </nav>
+</header> 
+
+<div class="movie-layout">
+    <% @movies.each do |movie|%>
+    <div class="movie-card">
+        <img src="/img/<%= movie['image_filename'] %>" alt="<%= movie['title'] %>">
+        <h3><%= movie['title']%></h3>
+        <p>Price: <%= movie['price']%></p>
+        <p>Genre: <%= movie['genre']%></p>
+        <p> <%= movie["available_for_rent"] == 1 ? 'Available' : 'Not available' %></p>
+        <a href="/movies/<%= movie['id']%>">More Info:</a>
+    </div>
+    <% end %>
+</div>
+
+
+<body>
+<script src="/js/index.js"></script>
+</html>
