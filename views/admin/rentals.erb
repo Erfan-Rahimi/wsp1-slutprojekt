@@ -1,0 +1,16 @@
+<h2> Filmer som <%= @user["username"]%> har hyrt ut</h2>
+
+<a href="/admin/dashboard">Gå tillbaka</a>
+
+<div class="movie-layout">
+    <% @rentals.each do |rental|%>
+    <div class="movie-card">
+        <img src="/img/<%= rental['image_filename']%>" alt="<%= rental['title']%>">
+        <h3><%= rental['title']%></h3>
+        <p>Uthyrd: <%= rental['rental_date']%></p>
+        <p id="timer-<%= rental['id']%>">Laddar ...</p>
+    </div>
+    <%end%>
+</div>
+
+<script src="/js/edit.js"></script>

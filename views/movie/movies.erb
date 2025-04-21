@@ -9,42 +9,9 @@
 </head>
 <body>
 
-    <header class="primary-header flex">
-    <div class="logo">
-        <i>Theaters</i>
-    </div>
-
-    <button aria-label="Open navigation" class="mobile-nav-toggle" aria-controls="primary-navigation " aria-expanded="false" onclick="myFunction(this)">
-        <span class="bar1"></span>
-        <span class="bar2"></span>
-        <span class="bar3"></span>
-    </button>
-
-            <nav>
-                <ul id="primary-navigation" data-visible="false" class="primary-navigation flex">
-
-                    <% if session[:role] == 'user'%>
-                        <li><a aria-label="Home" href="/">Home</a></li>
-                        <li><a href="/logout">Logout</a></li>
-                        <li><a aria-label="Movies" href="/movies">Movies</a></li>
-                        <li><a href="/cart">Cart(<%= cart_count %>)</a></li>
-                    <% elsif session[:role] == 'admin'%>
-                        <li><a aria-label="Home" href="/">Home</a></li>
-                        <li><a href="/logout">Logout</a></li>
-                        <li><a aria-label="Movies" href="/movies">Movies</a></li>
-                        <li><a aria-label="new movie" class="new-button" href="/movie/new">New movie</a></li>
-                    <% else %>
-                        <li><a aria-label="Home" href="/">Home</a></li>
-                        <li><a aria-label="Movies" href="/movies">Movies</a></li>
-                        <li><a aria-label="login" href="/movie/login">Log in</a></li>
-                    <% end %>
-                </ul>
-            </nav>
-</header> 
-
 <div class="movie-layout">
     <% @movies.each do |movie|%>
-    <div class="movie-card">
+    <div class="movie-card" data-genre="<%= movie['gengre']%>">
         <img src="/img/<%= movie['image_filename'] %>" alt="<%= movie['title'] %>">
         <h3><%= movie['title']%></h3>
         <p>Price: <%= movie['price']%></p>

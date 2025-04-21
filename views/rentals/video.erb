@@ -1,0 +1,9 @@
+<div class="video-container">
+    <h1><%= @rental["title"]%></h1>
+
+    <div class="video-holder">
+        <video width="640" height="360" controls>
+            <source src="/videos/<%= @rental["video_filename"] || 'placeholder.mp4' %>" type="video/mp4">
+        </video>
+    </div>
+</div>

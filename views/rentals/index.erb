@@ -1,0 +1,25 @@
+
+<div class="movie-layout">
+    <% if @rentals.empty? %>
+        <p>Det finns inga uthyrda filmer</p>
+    <% else %>
+            <% @rentals.each do |rental| %>
+            <a href="/rentals/<%= rental['rental_id']%>">
+                <div  class="movie-card" id="rental-card">
+                    <img src="/img/<%= rental['image_filename'] %>" alt="<%= rental['title'] %>">
+                    <h3><%= rental['title'] %></h3>
+                    <p><strong>Genre:</strong> <%= rental['genre'] %></p>
+                    <p><strong>Price:</strong> <%= rental['price'] %> kr</p>
+                    <p><strong>Rented date:</strong> <%= rental['rental_date'] %></p>
+                    <p><strong>Return date:</strong> <%= rental['return_date'] ? rental['return_date'] : 'N/A' %></p>
+                </div> 
+            </a>
+            <% end %> 
+        </div>
+    <% end %> 
+
+    <form action="/clear_rentals" method="post">
+        <button type="submit">Clear</button>
+    </form>
+</div> 
+

@@ -71,9 +71,15 @@ class Seeder
 
     db.execute('INSERT INTO movies (title, genre, price, available_for_rent, image_filename, movie_description) VALUES (?,?,?,?,?,?)',
     ["Mother", "Sci-Fi", 4.99, 1, "crime.jpg", "A mother desperately searches for the killer who framed her son for a girl's horrific murder."])
+
+    expire_time = (Time.now + 300).iso8601
+
+    db.execute("INSERT INTO rentals (user_id, movie_id, rental_date, return_date) VALUES (?, ?, datetime('now'), ?)",
+    [user_id, movie_id, expire_time])
   end
 
   private
+  
   def self.db
     return @db if @db
     @db = SQLite3::Database.new('db/movie.sqlite')

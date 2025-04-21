@@ -97,7 +97,7 @@ class App < Sinatra::Base
     
     # Rot till sidan för att lägga till nya filmer
     get '/movie/new' do 
-        @images = Dir.children("public/img").select {|file| file.match?(/\.(jpg|jpeg|png|gif)$/i) } #Tar upp alla bilder igen 
+      @images = Dir.entries('./public/img').select { |f| f.match(/\.(jpg|jpeg|png|gif)$/i) && f != "." && f != ".." }
         erb(:"/movie/new")
     end
 
@@ -111,7 +111,7 @@ class App < Sinatra::Base
         available = params[:available] == "on" ? 1 : 0
         image_filename = params[:image_filename]
 
-        db.execute("INSERT INTO Movies (title, genre, price, movie_description, available_for_rent, image_filename) VALUES (?, ?, ?, ?, ?, ?)", [movie_name, movie_genre, movie_price, movie_description, available, image_filename])
+        db.execute("INSERT INTO movies (title, genre, price, movie_description, available_for_rent, image_filename) VALUES (?, ?, ?, ?, ?, ?)", [movie_name, movie_genre, movie_price, movie_description, available, image_filename])
 
         redirect "/movies"
     end
@@ -166,24 +166,6 @@ class App < Sinatra::Base
       end
     end
 
-    # get '/admin/dashboard' do 
-    #   erb(:"/admin/dashboard")
-    # end
-
-    # get '/admin/dashboard' do 
-    #   redirect '/login' unless session[:user_id]
-
-    #   user = db.execute('SELECT * FROM users WHERE id = ?', session[:user_id]).first
-    #   redirect '/' unless user["user"] == "admin"
-
-    #   @movies = db.execute('SELECT * FROM movies')
-    #   @users = db.execute('SELECT * FROM users')
-    #   @rentals = db.execute('SELECT * FROM rentals')
-
-    #   erb:'admin/dashboard'
-
-    # end
-
     #En shopping cart 
     #Lägger till filmer till shopping cart för användaren
     post '/cart/add/:id' do |id|
@@ -236,5 +218,120 @@ class App < Sinatra::Base
         db.execute("SELECT COUNT(*) AS count FROM carts WHERE user_id = ?", [session[:user_id]]).first['count']
       end 
     end
-    
+
+    # För att kunna hyra ut filmer 
+    post '/rent' do 
+      redirect '/login' unless session[:user_id]
+      user_id = session[:user_id]
+
+      # För över alla filmer i en variabel
+      cart_items = db.execute('SELECT * FROM carts WHERE user_id = ?', [user_id])
+
+      #Lägg till dem i uthyrda filmer
+      cart_items.each do |item|
+        db.execute('INSERT INTO rentals (user_id, movie_id, rental_date) VALUES (?, ?, ?)',[
+          user_id,
+          item['movie_id'],
+          Time.now.to_s
+        ])
+      end
+
+      #Ta bort allt från carts
+      db.execute('DELETE FROM carts WHERE user_id = ?', [user_id])
+
+      #Tacka användaren
+      redirect '/movie/thanks'
+    end
+
+    get '/movie/thanks' do
+      erb :'/movie/thanks'
+    end
+
+    get '/rentals' do 
+      redirect '/login' unless session[:user_id]
+      user_id = session[:user_id]
+
+      @rentals = db.execute(
+        'SELECT rentals.id AS rental_id, rentals.*, movies.* FROM rentals 
+        JOIN movies ON rentals.movie_id = movies.id
+        WHERE rentals.user_id = ?', [user_id]
+      )
+        
+
+      erb :'rentals/index'
+    end
+
+    post '/clear_rentals' do 
+      if session[:user_id]
+
+        db.execute("DELETE FROM rentals WHERE user_id = ?", [session[:user_id]])
+        redirect '/rentals'
+      else
+        redirect '/login'
+      end
+    end
+
+    get '/rentals/:id' do |id|
+      redirect '/login' unless session[:user_id]
+
+      @rental = db.execute(
+        'SELECT rentals.*, movies.* FROM rentals
+        JOIN movies ON rentals.movie_id = movies.id
+        WHERE rentals.id = ? AND rentals.user_id = ?', [id, session[:user_id]]
+      ).first
+
+        erb :'rentals/video'
+
+    end
+
+    get '/admin/dashboard' do 
+      redirect '/login' unless session[:user_id]
+      redirect '/' unless admin?
+
+      @movies = db.execute('SELECT * FROM movies')
+      @users = db.execute('SELECT * FROM users')
+      @rentals = db.execute('SELECT rentals.*, movies.title, users.username, users.id as user_id FROM rentals
+        JOIN movies ON rentals.movie_id = movies.id
+        JOIN users ON rentals.user_id = users.id
+        ORDER BY rental_date DESC')
+
+      erb:'admin/dashboard'
+
+    end
+
+    #Kunna byta roller 
+    post '/admin/users/:id/role' do |id|
+      redirect '/login' unless session[:user_id]
+      redirect '/' unless admin?
+
+      new_role = params[:role]
+      db.execute("UPDATE users SET role = ? WHERE id = ?", [new_role, id])
+      redirect '/admin/dashboard'
+    end
+
+    #För att kunna ta bort användare
+    post '/admin/users/:id/delete' do |id|
+      redirect '/login' unless session[:user_id]
+      redirect '/' unless admin?
+
+      db.execute("DELETE FROM users WHERE id =?", [id])
+      redirect '/admin/dashboard'
+    end
+
+    #Se vad man har hyrt
+    get '/admin/users/:id/rentals' do |id|
+      redirect '/login' unless session[:user_id]
+      redirect '/' unless admin?
+
+      @user = db.execute("SELECT * FROM users WHERE id = ?", [id]).first
+      @rentals = db.execute(
+        'SELECT rentals.*, movies.title, movies.image_filename FROM rentals 
+        JOIN movies ON rentals.movie_id = movies.id
+        WHERE rentals.user_id = ?', [id]
+      )
+
+      erb:'admin/rentals'
+    end
+
+
 end

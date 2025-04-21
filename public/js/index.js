@@ -154,3 +154,23 @@ navToggle.addEventListener('click', (event) => {
 function myFunction(x) {
     x.classList.toggle("change");
 }
+
+
+document.addEventListener("DOMContentLoaded", () => {
+    const genreFilter = document.getElementById("genreFilter");
+    const movieCards = document.querySelectorAll(".movie-card");
+
+    genreFilter.addEventListener("change", () => {
+      const selectedGenre = genreFilter.value;
+
+      movieCards.forEach(card => {
+        const genre = card.dataset.genre;
+
+        if (selectedGenre === "all" || genre === selectedGenre) {
+          card.style.display = "block";
+        } else {
+          card.style.display = "none";
+        }
+      });
+    });
+  });

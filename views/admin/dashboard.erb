@@ -1,33 +1,65 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" type="text/css" href="/style.css?<%=Time.now.to_i%>">
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+<h2>Filmer</h2>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+<div class="movie-layout">
+    <% @movies.each do |movie|%>
+        <div class="movie-card" id="movie-card2"> 
+            <img src="/img/<%= movie['image_filename']%>" alt="<%= movie['title']%>">
+            <h3><%= movie['title']%></h3>
+            <p>Pris:<%= movie['price']%></p>
+            <p>Genre:<%= movie['genre']%></p>
+            <p>Status: <%= movie["available_for_rent"] == 1 ? '✅ Tillgänglig' : '❌ Ej tillgänglig' %></p>
 
-
-</head>
-<body>
-
-    <div class="dashboard-cards">
-        <div class="card">
-            <h2>Filmer</h2>
-            <p><%= @movies.count%>totalt</p>
-            <a href="/movies/new">Lägg till film</a>
+            <a href="/movies/<%= movie['id']%>">More Info:</a>
+            <form action="/movies/<%= movie['id']%>/delete" method="POST" style="display:inline;">
+                <button type="submit" class="delete-btn">Radera</button>
+            </form>
         </div>
-    </div>
+    <%end%>
+</div>
 
-    <div class="card">
-        <h2>Användare</h2>
-        <p><%= @users.count%> totlat</p>
-    </div>
-</body>
-<script src="/js/index.js"></script>
-</html>
+<hr>
+
+<h2>Alla användare</h2>
+
+<table class="admin-table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Role</th>
+            <th>Rented</th>
+            <th>Change role</th>
+            <th>Delete</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% @users.each do |user|%>
+            <tr>
+                <td><%= user["id"]%></td>
+                <td><%= user["username"]%></td>
+                <td><%= user["role"]%></td>
+                <td>
+                    <a href="/admin/users/<%= user["id"]%>/rentals"> See rentals </a>
+                </td>
+                <td>
+                    <form method="POST" action="/admin/users/<%= user["id"]%>/role">
+                        <select name="role" class="role-select">
+                            <option value="user" <%= "selected" if user["role"] == "user"%>>User</option>
+                            <option value="admin" <%= "selected" if user["role"] == "admin" %>>Admin</option>
+                        </select>
+                        <button type="submit">Change</button>
+                    </form>
+                </td>
+                <td>
+                    <form method="POST" action="/admin/users/<%= user['id']%>/delete">
+                        <button class="delete-button" type="submit">Delete user</button>
+                    </form>
+                </td>
+            </tr>
+        <%end%>
+    </tbody>
+</table>
+
+<hr>
+
+<h2></h2>

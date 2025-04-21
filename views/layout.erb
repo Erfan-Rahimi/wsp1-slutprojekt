@@ -22,8 +22,25 @@
     <nav>
       <ul class="primary-navigation flex">
         <li><a href="/">Home</a></li>
-        <li><a href="/movie/movies">Movies</a></li>
+        <li><a href="/movies">Movies</a></li>
+
+        <% if session[:user_id]%>
+        <li><a href="/logout">Logout</a></li>
+
+        <% if session[:role] == "admin" %>
+        <li><a href="/admin/dashboard">Dashboard</a></li>
+        <li><a href="/movie/new">Add new movie</a></li>
+        <% end %>
+
+        <% if session[:role] == "user"%>
+        <li><a href="/cart">Cart (<%= cart_count %>)</a></li>
+        <li><a href ="/rentals">rentals</a></li>
+        <% end %>
+
+        <% else %>
         <li><a href="/movie/login">Log in</a></li>
+        <li><a href="/movie/register">Register</a></li>
+        <% end %>
       </ul>
     </nav>
   </header>
