@@ -12,7 +12,7 @@ const message = "Tack för ditt köp!";
         if (i >= message.length) {
           clearInterval(interval);
           setTimeout(() => {
-            window.location.href = "/movies";
+            window.location.href = "/products/index";
           }, 1500);
         }
       }, 120);

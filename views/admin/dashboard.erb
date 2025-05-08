@@ -10,7 +10,7 @@
             <p>Status: <%= movie["available_for_rent"] == 1 ? '✅ Tillgänglig' : '❌ Ej tillgänglig' %></p>
 
             <a href="/movies/<%= movie['id']%>">More Info:</a>
-            <form action="/movies/<%= movie['id']%>/delete" method="POST" style="display:inline;">
+            <form action="/movie/<%= movie['id']%>/delete" method="POST" style="display:inline;">
                 <button type="submit" class="delete-btn">Radera</button>
             </form>
         </div>

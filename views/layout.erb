@@ -29,7 +29,7 @@
 
         <% if session[:role] == "admin" %>
         <li><a href="/admin/dashboard">Dashboard</a></li>
-        <li><a href="/movie/new">Add new movie</a></li>
+        <li><a href="/movies/new">Add new movie</a></li>
         <% end %>
 
         <% if session[:role] == "user"%>
@@ -38,8 +38,8 @@
         <% end %>
 
         <% else %>
-        <li><a href="/movie/login">Log in</a></li>
-        <li><a href="/movie/register">Register</a></li>
+        <li><a href="/user/login">Log in</a></li>
+        <li><a href="/user/register">Register</a></li>
         <% end %>
       </ul>
     </nav>

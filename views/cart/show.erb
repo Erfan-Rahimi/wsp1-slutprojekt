@@ -33,7 +33,7 @@
             </div>
 
               <div class="item-actions">
-                <form action="/cart/remove/<%= movie['id']%>" method="post">
+                  <form action="/cart/<%= movie['id']%>/delete" method="post">
                   <button class="remove-button">✖</button>
                 </form>
               </div>
@@ -48,11 +48,11 @@
         <hr>
         <p><strong>Totalt:</strong> <%= @cart_total%> kr</p>
 
-        <form action="/rent" method="post">
+        <form action="/rentals/update" method="post">
           <button type="submit" class="checkout-button">Rent</button>
         </form>
         
-        <form action="/clear_cart" method="post">
+        <form action="/cart/delete" method="post">
           <button type="submit" class="clear-cart-button">Clear cart</button>
         </form>
 

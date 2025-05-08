@@ -46,7 +46,7 @@
                 </p>
 
                 <% if @movie['available_for_rent'] == 1 %>
-                    <form action="/cart/add/<%= @movie['id']%>" method="post">
+                    <form action="/cart/<%= @movie['id']%>/update" method="post">
                         <button type="submit" class="rent-button">Add to cart</button>
                     </form>
                 <%end%>

@@ -16,109 +16,112 @@ class App < Sinatra::Base
         return @db
     end
 
-    #Om vi kallar på roten ('/') går det till index sidan ('/movie')
+    #Navigation och start
+
+    #Om vi kallar på roten ('/') går det till landingpage sidan ('/movie')
     #Alltså först när man öppnar sidan går man direkt dit 
     get '/' do 
-        redirect('/movie') #Den delen leder en till den sidan
+        redirect('/webpages') #Den delen leder en till den sidan
     end
 
     #Detta används tillsammans med navigationen på sidan 
-    #Om man är på ett annat sida kan man gå tillbaka till index sidan.
-    get '/movie' do 
-        erb(:"/movie/index")
+    #Om man är på ett annat sida kan man gå tillbaka till landingpage sidan.
+    get '/webpages' do 
+        erb(:"/webpages/landingpage")
     end
+
+
+    # MOVIE ROUTES
 
     #Visar upp alla våra filmer 
     #Tar upp allting sparade från table 'movies' i databasen
     get '/movies' do
         @movies = db.execute('SELECT * FROM movies') # Sparar allt data från i db i globala variabeln @movies
-        erb:"/movie/movies" #Sedan går vi till sidan med alla filmer. erb är fil formaten tror jag.
+        erb:"/movies/index" #Sedan går vi till sidan med alla filmer. erb är fil formaten tror jag.
     end
 
-    #Detta används tillsammans med navigationen. 
-    # Om man trycker på login går det till login sidan 
-    get '/movie/login' do 
-        erb(:"/movie/login")
-    end
-
-    # Detta används tillsammans med navigationen på sidan.
-    # Om man inte har ett konto tar den dig till registrering sidan.
-    get '/movie/register' do 
-        erb(:'/movie/register')
+    # Rot till sidan för att lägga till nya filmer
+    get '/movies/new' do 
+      @images = Dir.entries('./public/img').select { |f| f.match(/\.(jpg|jpeg|png|gif)$/i) && f != "." && f != ".." }
+      erb :'/movies/new'
     end
 
     # EN rot som ska visa all info om en specefik film 
     # Detta tar in ett id parameter för att kunna identifera vilken film det är.
     get '/movies/:id' do |id|
-        @movie = db.execute('SELECT * FROM Movies WHERE id=?', id).first # Hämtar upp filmen med den specefika id
+      @movie = db.execute('SELECT * FROM Movies WHERE id=?', id).first # Hämtar upp filmen med den specefika id
+      if @movie.nil?
+          halt 404, "Movie not found" # Om den filmen inte finns, till exempel om man skriver någonting i search baren kommer det upp att filmen inte finns.
+      end
+      erb(:"movies/show") # Tar en till sidan med specifik information om den filmen 
+    end
 
-        if @movie.nil?
-            halt 404, "Movie not found" # Om den filmen inte finns, till exempel om man skriver någonting i search baren kommer det upp att filmen inte finns.
-        end
+    
+    #För att lägga till filmer. Typ samma som att redigera en film
+    post '/movies' do 
+      movie_name = params[:movie_name]
+      movie_genre = params[:movie_genre]
+      movie_price = params[:movie_price]
+      movie_description = params[:movie_description]
+      available = params[:available] == "on" ? 1 : 0
+      image_filename = params[:image_filename]
 
-        erb(:"movie/show") # Tar en till sidan med specifik information om den filmen 
+      db.execute("INSERT INTO movies (title, genre, price, movie_description, available_for_rent, image_filename) VALUES (?, ?, ?, ?, ?, ?)", [movie_name, movie_genre, movie_price, movie_description, available, image_filename])
+
+      redirect "/movies/index"
     end
 
     #För att redigera filmerna.  
     #Skapar också en lista över alla bilder och sparar dem i variabeln images som skickas till edit.erb
     get '/movies/:id/edit' do |id|
-        @movie = db.execute('SELECT * FROM Movies WHERE id=?', id).first # Hämta upp allting om filmen från movies 
-        @images = Dir.children("public/img").select {|file| file.match?(/\.(jpg|jpeg|png|gif)$/i) } # Lista alla bild filer i våran projekt i 'public/img'
-       
-        erb :"movie/edit" # Leda till redigerings sidan.
+      @movie = db.execute('SELECT * FROM Movies WHERE id=?', id).first # Hämta upp allting om filmen från movies 
+      @images = Dir.children("public/img").select {|file| file.match?(/\.(jpg|jpeg|png|gif)$/i) } # Lista alla bild filer i våran projekt i 'public/img'
+     
+      erb :"movies/edit" # Leda till redigerings sidan.
     end
 
-
-    #Uppdatera detailjerna om en film 
+      #Uppdatera detailjerna om en film 
     #Tar in data och uppdaterar enligt det i databasen
     post '/movies/:id/update' do |id|
 
-        title = params[:movie_name] # Ta film namnet från datan.
-        genre = params[:movie_genre]
-        price = params[:movie_price]
-        movie_description = params[:description]
-        available = params[:available] == "on" ? 1 : 0
-        image_filename = params[:image_filename]
+      title = params[:movie_name] # Ta film namnet från datan.
+      genre = params[:movie_genre]
+      price = params[:movie_price]
+      movie_description = params[:description]
+      available = params[:available] == "on" ? 1 : 0
+      image_filename = params[:image_filename]
 
-        # Uppdatera allting om filmen i databasen med den nya informationen.
-        db.execute("UPDATE movies SET title = ?, genre = ?, price = ?, movie_description = ?, available_for_rent = ?, image_filename = ? WHERE id = ?", [title, genre, price, movie_description, available, image_filename, id])
+      # Uppdatera allting om filmen i databasen med den nya informationen.
+      db.execute("UPDATE movies SET title = ?, genre = ?, price = ?, movie_description = ?, available_for_rent = ?, image_filename = ? WHERE id = ?", [title, genre, price, movie_description, available, image_filename, id])
 
-          redirect "/movies" #Gå tillbaka till film sidan efter uppdatering 
+        redirect "/movies/index" #Gå tillbaka till film sidan efter uppdatering 
     end
 
-
-    #För att radera en film 
+      #För att radera en film 
     #Ta bort filmen med dess id 
     post '/movies/:id/delete' do |id|
-        db.execute("DELETE FROM movies WHERE id = ?", [id]) #Radera filmen med id
-        redirect "/movies" # Tillbaka till filmerna 
-    end
-
-    
-    # Rot till sidan för att lägga till nya filmer
-    get '/movie/new' do 
-      @images = Dir.entries('./public/img').select { |f| f.match(/\.(jpg|jpeg|png|gif)$/i) && f != "." && f != ".." }
-        erb(:"/movie/new")
+      db.execute("DELETE FROM movies WHERE id = ?", [id]) #Radera filmen med id
+      redirect "/admin/dashboard" # Tillbaka till filmerna 
     end
 
 
-    #För att lägga till filmer. Typ samma som att redigera en film
-    post '/movies/add' do 
-        movie_name = params[:movie_name]
-        movie_genre = params[:movie_genre]
-        movie_price = params[:movie_price]
-        movie_description = params[:movie_description]
-        available = params[:available] == "on" ? 1 : 0
-        image_filename = params[:image_filename]
+    # USER ROUTES 
 
-        db.execute("INSERT INTO movies (title, genre, price, movie_description, available_for_rent, image_filename) VALUES (?, ?, ?, ?, ?, ?)", [movie_name, movie_genre, movie_price, movie_description, available, image_filename])
+    #Detta används tillsammans med navigationen. 
+    # Om man trycker på login går det till login sidan 
+    get '/user/login' do 
+        erb(:"/user/login")
+    end
 
-        redirect "/movies"
+    # Detta används tillsammans med navigationen på sidan.
+    # Om man inte har ett konto tar den dig till registrering sidan.
+    get '/user/register' do 
+        erb(:'/user/register')
     end
 
     #Rot för att kunna lägga till nya användare. 
     #Användaren skriver in ett username och lösenord som vi hashar.
-    post '/movie/register' do 
+    post '/user' do 
         username = params[:username]
         password = BCrypt::Password.create(params[:password])
 
@@ -129,17 +132,12 @@ class App < Sinatra::Base
         else
           # Om inte så insertar vi den nya användaren till users tablen. Rollen blir alltid user då vi har endast en admin
           db.execute("INSERT INTO users (username, password, role) VALUES (?, ?, ?)", [username, password, "user"])
-          redirect '/login'
+          redirect '/user/login'
         end
     end
 
-    #Går till login efter redirect.
-    get '/login' do 
-        erb(:"/movie/login")
-    end
-
     #För att logga in 
-    post '/login' do 
+    post '/user/login' do 
         user = db.execute("SELECT * FROM users WHERE username = ?", params[:username]).first # Tar den användaren i datan med den specifika usernamen 
 
         # Vi veriferar att det är rätt lösenord och sen skapar en session för dem.
@@ -166,24 +164,13 @@ class App < Sinatra::Base
       end
     end
 
-    #En shopping cart 
-    #Lägger till filmer till shopping cart för användaren
-    post '/cart/add/:id' do |id|
-      user_id = session[:user_id] # Hämtar vem som är i sessionen beroende på användarens id 
-      existing = db.execute("SELECT * FROM carts WHERE user_id = ? AND movie_id = ?", [user_id, id]).first #hämtar upp om den filmen redan finns i carten 
 
-      #om det finns så lägger den inte till den men om den inte finns lägger vi till den i carte tablen.
-      unless existing
-        db.execute("INSERT INTO carts (user_id, movie_id) VALUES (?, ?)", [user_id, id])
-      end
-     
-      redirect :'/movies'
-    end
 
+    # CART ROUTES
 
     #För att kunna se shopping carten 
     get '/cart' do 
-      redirect '/login' unless session[:user_id] #Säkerställer bara så att man inte kan gå in i cart om man inte är inloggade eller en användare
+      redirect '/user/login' unless session[:user_id] #Säkerställer bara så att man inte kan gå in i cart om man inte är inloggade eller en användare
       user_id = session[:user_id] # Tar användarens id 
 
       @cart_movies = db.execute(
@@ -197,16 +184,32 @@ class App < Sinatra::Base
       erb :'cart/show'
     end
 
+    #En shopping cart 
+    #Lägger till filmer till shopping cart för användaren
+    post '/cart/:id/update' do |id|
+      user_id = session[:user_id] # Hämtar vem som är i sessionen beroende på användarens id 
+      existing = db.execute("SELECT * FROM carts WHERE user_id = ? AND movie_id = ?", [user_id, id]).first #hämtar upp om den filmen redan finns i carten 
+
+      #om det finns så lägger den inte till den men om den inte finns lägger vi till den i carte tablen.
+      unless existing
+        db.execute("INSERT INTO carts (user_id, movie_id) VALUES (?, ?)", [user_id, id])
+      end
+     
+      redirect "/movies"
+    end
+
     #Ta bort enskilda filmers från carten
-    post '/cart/remove/:movie_id' do |movie_id|
+    post '/cart/:id/delete' do |id|
+      user_id = session[:user_id]
+
       # Tar bort filmen 
-      db.execute("DELETE FROM carts WHERE user_id = ? AND movie_id = ?", [session[:user_id], movie_id])
+      db.execute("DELETE FROM carts WHERE user_id = ? AND movie_id = ?", [user_id, id])
       redirect '/cart'
     end
 
     #Att rensa carten
     #Rensa hela carten
-    post '/clear_cart' do 
+    post '/cart/delete' do 
       #Ta bort allting från carts
       db.execute("DELETE FROM carts WHERE user_id = ?", [session[:user_id]])
       redirect'/cart'
@@ -219,9 +222,11 @@ class App < Sinatra::Base
       end 
     end
 
+    # RENT ROUTES
+
     # För att kunna hyra ut filmer 
-    post '/rent' do 
-      redirect '/login' unless session[:user_id]
+    post '/rentals/update' do 
+      redirect '/user/login' unless session[:user_id]
       user_id = session[:user_id]
 
       # För över alla filmer i en variabel
@@ -240,15 +245,15 @@ class App < Sinatra::Base
       db.execute('DELETE FROM carts WHERE user_id = ?', [user_id])
 
       #Tacka användaren
-      redirect '/movie/thanks'
+      redirect '/purchase_page'
     end
 
-    get '/movie/thanks' do
-      erb :'/movie/thanks'
+    get '/purchase_page' do
+      erb :'/webpages/purchase_page'
     end
 
     get '/rentals' do 
-      redirect '/login' unless session[:user_id]
+      redirect '/user/login' unless session[:user_id]
       user_id = session[:user_id]
 
       @rentals = db.execute(
@@ -261,18 +266,18 @@ class App < Sinatra::Base
       erb :'rentals/index'
     end
 
-    post '/clear_rentals' do 
+    post '/rentals/delete' do 
       if session[:user_id]
 
         db.execute("DELETE FROM rentals WHERE user_id = ?", [session[:user_id]])
         redirect '/rentals'
       else
-        redirect '/login'
+        redirect '/user/login'
       end
     end
 
     get '/rentals/:id' do |id|
-      redirect '/login' unless session[:user_id]
+      redirect '/user/login' unless session[:user_id]
 
       @rental = db.execute(
         'SELECT rentals.*, movies.* FROM rentals
@@ -280,12 +285,14 @@ class App < Sinatra::Base
         WHERE rentals.id = ? AND rentals.user_id = ?', [id, session[:user_id]]
       ).first
 
-        erb :'rentals/video'
+        erb :'rentals/show_video'
 
     end
 
+    # ADMIN ROUTES
+
     get '/admin/dashboard' do 
-      redirect '/login' unless session[:user_id]
+      redirect '/user/login' unless session[:user_id]
       redirect '/' unless admin?
 
       @movies = db.execute('SELECT * FROM movies')
@@ -301,7 +308,7 @@ class App < Sinatra::Base
 
     #Kunna byta roller 
     post '/admin/users/:id/role' do |id|
-      redirect '/login' unless session[:user_id]
+      redirect '/user/login' unless session[:user_id]
       redirect '/' unless admin?
 
       new_role = params[:role]
@@ -311,7 +318,7 @@ class App < Sinatra::Base
 
     #För att kunna ta bort användare
     post '/admin/users/:id/delete' do |id|
-      redirect '/login' unless session[:user_id]
+      redirect '/user/login' unless session[:user_id]
       redirect '/' unless admin?
 
       db.execute("DELETE FROM users WHERE id =?", [id])
@@ -320,7 +327,7 @@ class App < Sinatra::Base
 
     #Se vad man har hyrt
     get '/admin/users/:id/rentals' do |id|
-      redirect '/login' unless session[:user_id]
+      redirect '/user/login' unless session[:user_id]
       redirect '/' unless admin?
 
       @user = db.execute("SELECT * FROM users WHERE id = ?", [id]).first
